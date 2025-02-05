@@ -34,3 +34,151 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+Yes, this app can be saved and run on your phone! Since it's built with **React Native**, you can easily test and use it on your mobile device. Here's how you can do it:
+
+---
+
+### **Steps to Save and Run the App on Your Phone**
+
+#### 1. **Set Up Your Development Environment**
+Make sure you have the following installed:
+- **Node.js**: Download from [nodejs.org](https://nodejs.org/).
+- **Expo CLI**: Install it globally using npm:
+  ```bash
+  npm install -g expo-cli
+  ```
+
+---
+
+#### 2. **Download the Project**
+If you haven't already, download the project files (or clone the repository if you've uploaded it to GitHub).
+
+---
+
+#### 3. **Install Dependencies**
+Navigate to the project folder and install the required dependencies:
+```bash
+cd CommenterApp
+npm install
+```
+
+---
+
+#### 4. **Run the App**
+Start the development server:
+```bash
+npm start
+```
+This will open the **Expo Dev Tools** in your browser.
+
+---
+
+#### 5. **Run on Your Phone**
+You can run the app on your phone in two ways:
+
+##### **Option 1: Use the Expo Go App**
+1. Download the **Expo Go** app from the App Store (iOS) or Google Play Store (Android).
+2. Scan the QR code displayed in the Expo Dev Tools using your phone's camera or the Expo Go app.
+3. The app will load on your phone, and you can use it in real-time.
+
+##### **Option 2: Build a Standalone App**
+If you want to save the app permanently on your phone, you can build a standalone app using Expo:
+1. Install **EAS CLI** (Expo Application Services):
+   ```bash
+   npm install -g eas-cli
+   ```
+2. Log in to your Expo account:
+   ```bash
+   eas login
+   ```
+3. Configure the project for building:
+   ```bash
+   eas build:configure
+   ```
+4. Build the app for iOS or Android:
+   ```bash
+   eas build --platform android
+   ```
+   or
+   ```bash
+   eas build --platform ios
+   ```
+5. Once the build is complete, download the `.apk` (Android) or `.ipa` (iOS) file and install it on your phone.
+
+---
+
+### **Saving Data on Your Phone**
+If you want the app to save data (e.g., comments, settings) locally on your phone, you can use **AsyncStorage** (for simple data) or **SQLite** (for more complex data). Here's an example using AsyncStorage:
+
+#### 1. **Install AsyncStorage**
+```bash
+npm install @react-native-async-storage/async-storage
+```
+
+#### 2. **Save and Load Comments**
+Update the app to save and load comments from AsyncStorage:
+
+```javascript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Save comments
+const saveComments = async (comments) => {
+  try {
+    await AsyncStorage.setItem('comments', JSON.stringify(comments));
+  } catch (error) {
+    console.error('Error saving comments:', error);
+  }
+};
+
+// Load comments
+const loadComments = async () => {
+  try {
+    const savedComments = await AsyncStorage.getItem('comments');
+    return savedComments ? JSON.parse(savedComments) : [];
+  } catch (error) {
+    console.error('Error loading comments:', error);
+    return [];
+  }
+};
+
+// Update handleAddComment
+const handleAddComment = async () => {
+  if (comment.trim()) {
+    const newComment = {
+      id: Date.now().toString(),
+      text: comment,
+      location: nearbyPlaces[0] || 'Unknown Location',
+      tone: getToneMessage(tone),
+    };
+    const updatedComments = [...comments, newComment];
+    setComments(updatedComments);
+    setComment('');
+    await saveComments(updatedComments); // Save comments
+  }
+};
+
+// Load comments on app start
+useEffect(() => {
+  const loadSavedComments = async () => {
+    const savedComments = await loadComments();
+    setComments(savedComments);
+  };
+  loadSavedComments();
+}, []);
+```
+
+---
+
+### **Publishing the App**
+If you want to publish the app to the **Google Play Store** or **Apple App Store**, follow these steps:
+1. **Create a Developer Account**:
+   - Google Play Console: [https://play.google.com/console](https://play.google.com/console)
+   - Apple Developer Program: [https://developer.apple.com](https://developer.apple.com)
+2. **Build the App**:
+   Use Expo's EAS Build to generate production-ready builds.
+3. **Submit the App**:
+   Follow the guidelines for submitting apps to the respective stores.
+
+---
+
+Let me know if you need help with any of these steps! 🚀
